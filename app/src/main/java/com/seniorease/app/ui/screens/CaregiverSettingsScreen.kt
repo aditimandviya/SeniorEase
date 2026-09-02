@@ -166,6 +166,8 @@ fun CaregiverSettingsScreen(
                         onUpdateHospital = { viewModel.updateHospital(it) }
                     )
                     3 -> SystemSettingsTab(
+                        caregiverPasscode = settings?.caregiverPasscode ?: "1234",
+                        onUpdatePasscode = { viewModel.updateCaregiverPasscode(it) },
                         defaultCabApp = settings?.defaultCabApp ?: "Uber",
                         defaultCabAppPackage = settings?.defaultCabAppPackage ?: "com.ubercab",
                         onUpdateCabApp = { app, pkg -> viewModel.updateDefaultCabApp(app, pkg) },
@@ -1018,6 +1020,8 @@ fun HospitalsTab(
 
 @Composable
 fun SystemSettingsTab(
+    caregiverPasscode: String,
+    onUpdatePasscode: (String) -> Unit,
     defaultCabApp: String,
     defaultCabAppPackage: String,
     onUpdateCabApp: (String, String) -> Unit,
@@ -1104,6 +1108,44 @@ fun SystemSettingsTab(
         }
 
         Divider(color = BorderLight, modifier = Modifier.padding(vertical = 8.dp))
+
+        // Caregiver Security Passcode Card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            border = BorderStroke(2.dp, AccentBlue),
+            colors = CardDefaults.cardColors(containerColor = CardBackground)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text("Caregiver Security Passcode", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                Text("Set your 4-digit passcode required to open Caregiver Settings.", style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
+                Spacer(modifier = Modifier.height(12.dp))
+                var newPin by remember { mutableStateOf(caregiverPasscode) }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = newPin,
+                        onValueChange = { newPin = it },
+                        label = { Text("Passcode") },
+                        singleLine = true,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(
+                        onClick = {
+                            if (newPin.length >= 4) {
+                                onUpdatePasscode(newPin)
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentBlue),
+                        modifier = Modifier.height(56.dp)
+                    ) {
+                        Text("UPDATE PIN", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
 
         Text("Test Suite and Debugging", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = PrimaryText)
 

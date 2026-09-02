@@ -85,6 +85,7 @@ fun WelcomeSetupWizard(
 
 
     var addNetworkCard by remember { mutableStateOf(false) }
+    var setupCaregiverPin by remember { mutableStateOf("") }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -237,6 +238,20 @@ fun WelcomeSetupWizard(
                             onValueChange = { homeAddress = it },
                             label = { Text("Home Address (Optional)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = AccentBlue,
+                                unfocusedBorderColor = BorderMedium
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        OutlinedTextField(
+                            value = setupCaregiverPin,
+                            onValueChange = { setupCaregiverPin = it },
+                            label = { Text("Set Caregiver Security Passcode (4 Digits) *", style = MaterialTheme.typography.bodyMedium) },
+                            textStyle = MaterialTheme.typography.bodyLarge,
+                            singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = AccentBlue,
@@ -611,6 +626,9 @@ fun WelcomeSetupWizard(
                                     language = language,
                                     homeAddr = homeAddress.ifBlank { null }
                                 )
+                                if (setupCaregiverPin.isNotBlank()) {
+                                    viewModel.updateCaregiverPasscode(setupCaregiverPin)
+                                }
                                 viewModel.updateDefaultCabApp(selectedCabAppSetup, selectedCabPackageSetup)
                                 // Save Emergency Contacts
                                 tempContacts.forEachIndexed { index, contact ->

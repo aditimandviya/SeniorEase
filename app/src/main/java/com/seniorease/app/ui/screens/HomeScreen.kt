@@ -400,6 +400,11 @@ fun HomeScreen(
         }
     }
 
+    var showForgotPasscodeDialog by remember { mutableStateOf(false) }
+    var resetVerifyInput by remember { mutableStateOf("") }
+    var newPinInput by remember { mutableStateOf("") }
+    var resetErrorText by remember { mutableStateOf("") }
+
     // Caregiver Mode Passcode Prompt Dialog
     if (showPasscodeDialog) {
         AlertDialog(
@@ -419,7 +424,7 @@ fun HomeScreen(
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        "Please enter the caregiver passcode (Default: 1234).",
+                        "Please enter your 4-digit caregiver passcode.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = SecondaryText,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -446,6 +451,20 @@ fun HomeScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = 8.dp)
                         )
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    TextButton(
+                        onClick = {
+                            showPasscodeDialog = false
+                            passcodeText = ""
+                            passcodeError = false
+                            resetVerifyInput = ""
+                            newPinInput = ""
+                            resetErrorText = ""
+                            showForgotPasscodeDialog = true
+                        }
+                    ) {
+                        Text("Forgot Passcode?", color = AccentBlue, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                     }
                 }
             },
@@ -478,8 +497,78 @@ fun HomeScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
-                        .padding(top = 8.dp)
+                        .height(56.dp)
+                ) {
+                    Text("CANCEL", style = MaterialTheme.typography.labelLarge, color = SecondaryText)
+                }
+            }
+        )
+    }
+
+    // Forgot Passcode Reset Dialog
+    if (showForgotPasscodeDialog) {
+        AlertDialog(
+            onDismissRequest = { showForgotPasscodeDialog = false },
+            title = {
+                Text("Reset Caregiver Passcode", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        "Security Verification: Enter the senior's name or home address to verify identity.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SecondaryText
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = resetVerifyInput,
+                        onValueChange = { resetVerifyInput = it; resetErrorText = "" },
+                        label = { Text("Senior's Name or Address") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = newPinInput,
+                        onValueChange = { newPinInput = it; resetErrorText = "" },
+                        label = { Text("New 4-Digit Passcode") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    if (resetErrorText.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(resetErrorText, color = EmergencyRed, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val seniorName = userProfile?.name ?: ""
+                        val seniorHome = userProfile?.homeAddress ?: ""
+                        val matchName = seniorName.isNotBlank() && resetVerifyInput.contains(seniorName, ignoreCase = true)
+                        val matchHome = seniorHome.isNotBlank() && resetVerifyInput.contains(seniorHome, ignoreCase = true)
+
+                        if ((matchName || matchHome || seniorName.isBlank()) && newPinInput.length >= 4) {
+                            viewModel.updateCaregiverPasscode(newPinInput)
+                            showForgotPasscodeDialog = false
+                            onNavigateToCaregiver()
+                        } else if (newPinInput.length < 4) {
+                            resetErrorText = "New passcode must be at least 4 characters."
+                        } else {
+                            resetErrorText = "Verification failed. Please enter correct senior name or address."
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+                ) {
+                    Text("RESET & UNLOCK", style = MaterialTheme.typography.labelLarge)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showForgotPasscodeDialog = false },
+                    modifier = Modifier.fillMaxWidth().height(56.dp).padding(top = 8.dp)
                 ) {
                     Text("CANCEL", style = MaterialTheme.typography.labelLarge, color = SecondaryText)
                 }
