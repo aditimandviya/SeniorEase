@@ -93,10 +93,7 @@ fun WelcomeSetupWizard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(20.dp)
         ) {
             // Header Indicator
             if (currentStep > 0) {
@@ -119,23 +116,23 @@ fun WelcomeSetupWizard(
                         trackColor = BorderLight
                     )
                 }
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
             // Disclaimer Banner
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 12.dp),
                 colors = CardDefaults.cardColors(containerColor = AccentAmber.copy(alpha = 0.15f)),
                 border = BorderStroke(2.dp, AccentAmber),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("⚠️", fontSize = 24.sp, modifier = Modifier.padding(end = 12.dp))
+                    Text("⚠️", fontSize = 22.sp, modifier = Modifier.padding(end = 10.dp))
                     Text(
                         text = "DISCLAIMER: Completing required fields is required. Otherwise, the app cannot be properly configured.",
                         style = MaterialTheme.typography.bodyMedium,
@@ -145,12 +142,12 @@ fun WelcomeSetupWizard(
                 }
             }
 
-            // Step Content
+            // Scrollable Step Content
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                verticalArrangement = Arrangement.Center,
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 when (currentStep) {

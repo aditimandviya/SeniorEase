@@ -337,53 +337,45 @@ fun CaregiverSettingsScreen(
                             singleLine = true,
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Box(
+                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(200.dp)
-                                .background(ScreenBackground, RoundedCornerShape(12.dp))
-                                .border(1.dp, BorderLight, RoundedCornerShape(12.dp))
-                                .padding(8.dp)
+                                .padding(vertical = 4.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
-                            androidx.compose.foundation.lazy.LazyColumn(modifier = Modifier.fillMaxSize()) {
-                                items(filteredApps.size) { idx ->
-                                    val (appName, pkgName) = filteredApps[idx]
-                                    val isSelected = actionPayload == pkgName
-                                    Card(
-                                        onClick = {
-                                            actionPayload = pkgName
-                                            if (actionTitle.isBlank()) {
-                                                actionTitle = appName.uppercase()
-                                            }
-                                        },
+                            filteredApps.take(20).forEach { (appName, pkgName) ->
+                                val isSelected = actionPayload == pkgName
+                                Card(
+                                    onClick = {
+                                        actionPayload = pkgName
+                                        if (actionTitle.isBlank()) {
+                                            actionTitle = appName.uppercase()
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = if (isSelected) AccentTeal.copy(alpha = 0.15f) else CardBackground),
+                                    border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) AccentTeal else BorderLight)
+                                ) {
+                                    Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
-                                        colors = CardDefaults.cardColors(containerColor = if (isSelected) AccentTeal.copy(alpha = 0.15f) else CardBackground),
-                                        border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) AccentTeal else BorderLight)
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(12.dp),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween
-                                        ) {
-                                            Column(modifier = Modifier.weight(1f)) {
-                                                Text(appName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-                                                Text(pkgName, style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
-                                            }
-                                            RadioButton(
-                                                selected = isSelected,
-                                                onClick = {
-                                                    actionPayload = pkgName
-                                                    if (actionTitle.isBlank()) {
-                                                        actionTitle = appName.uppercase()
-                                                    }
-                                                }
-                                            )
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(appName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                                            Text(pkgName, style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
                                         }
+                                        RadioButton(
+                                            selected = isSelected,
+                                            onClick = {
+                                                actionPayload = pkgName
+                                                if (actionTitle.isBlank()) {
+                                                    actionTitle = appName.uppercase()
+                                                }
+                                            }
+                                        )
                                     }
                                 }
                             }
