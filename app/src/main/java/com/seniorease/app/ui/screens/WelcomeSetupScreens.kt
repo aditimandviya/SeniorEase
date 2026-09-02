@@ -103,12 +103,12 @@ fun WelcomeSetupWizard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Step $currentStep of 5",
+                        text = "Step $currentStep of 6",
                         style = MaterialTheme.typography.bodyMedium,
                         color = SecondaryText
                     )
                     LinearProgressIndicator(
-                        progress = currentStep / 5f,
+                        progress = currentStep / 6f,
                         modifier = Modifier
                             .width(150.dp)
                             .height(10.dp),
@@ -411,36 +411,35 @@ fun WelcomeSetupWizard(
                     }
 
                     4 -> {
-                        // Cab App & Network Card Setup
+                        // Dedicated Step 4: Cab Booking App Selection Page
                         Text(
-                            text = "App & Network Settings",
+                            text = "🚕 Preferred Cab Booking App",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Configure cab app preferences and network shortcut.",
+                            text = "Choose which cab app SeniorEase should open when booking a cab.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = SecondaryText,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                        // Cab App Selection Box
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = CardBackground),
                             border = BorderStroke(2.dp, AccentBlue)
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(modifier = Modifier.padding(20.dp)) {
                                 Text(
-                                    text = "🚕 Preferred Cab Booking App",
+                                    text = "Select Default Cab Provider:",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = PrimaryText
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(modifier = Modifier.height(12.dp))
 
                                 getInstalledCabApps.forEach { (cabName, cabPkg, isInstalled) ->
                                     val statusLabel = if (isInstalled) "(Detected)" else "(Not Installed)"
@@ -449,7 +448,7 @@ fun WelcomeSetupWizard(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(vertical = 4.dp),
+                                            .padding(vertical = 8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         RadioButton(
@@ -474,29 +473,44 @@ fun WelcomeSetupWizard(
                                 }
                             }
                         }
+                    }
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                    5 -> {
+                        // Dedicated Step 5: Network & SIM Settings Option Page
+                        Text(
+                            text = "🌐 Change Network / SIM Option",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = PrimaryText
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Configure whether to display a shortcut for SIM Manager and Mobile Data settings.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = SecondaryText,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
 
-                        // Network Change Option Prompt
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             colors = CardDefaults.cardColors(containerColor = CardBackground),
                             border = BorderStroke(2.dp, AccentTeal)
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
+                            Column(modifier = Modifier.padding(20.dp)) {
                                 Text(
-                                    text = "🌐 Change Network / SIM Card Option",
+                                    text = "Add 'Change Network / SIM' card to Home Screen?",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = PrimaryText
                                 )
-                                Spacer(modifier = Modifier.height(6.dp))
+                                Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = "Do you want to add a 'Change Network / SIM' card to the main screen so the senior can open Mobile Data and SIM settings easily?",
+                                    text = "This allows the senior to open SIM Manager and Mobile Data settings with a single tap.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = SecondaryText
                                 )
-                                Spacer(modifier = Modifier.height(14.dp))
+                                Spacer(modifier = Modifier.height(16.dp))
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -517,19 +531,19 @@ fun WelcomeSetupWizard(
                                 }
 
                                 if (addNetworkCard) {
-                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Spacer(modifier = Modifier.height(20.dp))
                                     Surface(
                                         color = AccentTeal.copy(alpha = 0.12f),
                                         shape = RoundedCornerShape(12.dp)
                                     ) {
-                                        Column(modifier = Modifier.padding(14.dp)) {
+                                        Column(modifier = Modifier.padding(16.dp)) {
                                             Text(
                                                 text = "📱 How to Change Network on This Phone:",
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 fontWeight = FontWeight.Bold,
                                                 color = AccentTeal
                                             )
-                                            Spacer(modifier = Modifier.height(6.dp))
+                                            Spacer(modifier = Modifier.height(8.dp))
                                             Text(
                                                 text = "1. Tap 'CHANGE NETWORK / SIM' card on Home screen.\n2. Tap 'Settings' -> 'Network & Internet' -> 'SIMs'.\n3. Scroll down and toggle 'Mobile Data' at the bottom.",
                                                 style = MaterialTheme.typography.bodyMedium,
@@ -542,8 +556,8 @@ fun WelcomeSetupWizard(
                         }
                     }
 
-                    5 -> {
-                        // Confirmation / Ready screen
+                    6 -> {
+                        // Confirmation / Ready screen (Step 6 of 6)
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
@@ -591,7 +605,7 @@ fun WelcomeSetupWizard(
 
                     Button(
                         onClick = {
-                            if (currentStep == 5) {
+                            if (currentStep == 6) {
                                 viewModel.saveProfile(
                                     name = name.ifBlank { "User" },
                                     language = language,
@@ -641,7 +655,7 @@ fun WelcomeSetupWizard(
                         colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
                     ) {
                         Text(
-                            text = if (currentStep == 5) "FINISH" else "NEXT",
+                            text = if (currentStep == 6) "FINISH" else "NEXT",
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
