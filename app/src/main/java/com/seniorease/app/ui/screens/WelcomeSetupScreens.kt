@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.seniorease.app.ui.MainViewModel
 import com.seniorease.app.ui.theme.*
 
@@ -83,17 +84,7 @@ fun WelcomeSetupWizard(
     }
 
 
-    // Suggested actions checklist
-    val predefinedSuggestions = remember {
-        mutableStateListOf(
-            Triple("EMERGENCY DIRECT DIAL", "🚨", true),
-            Triple("FLASHLIGHT", "🔦", true),
-            Triple("BOOK A CAB", "🚕", true),
-            Triple("PHONE SETTINGS", "⚙️", true),
-            Triple("OPEN WHATSAPP", "💬", true),
-            Triple("OPEN YOUTUBE", "📺", true)
-        )
-    }
+    var addNetworkCard by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -129,6 +120,29 @@ fun WelcomeSetupWizard(
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // Disclaimer Banner
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = AccentAmber.copy(alpha = 0.15f)),
+                border = BorderStroke(2.dp, AccentAmber),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("⚠️", fontSize = 24.sp, modifier = Modifier.padding(end = 12.dp))
+                    Text(
+                        text = "DISCLAIMER: Completing required fields is required. Otherwise, the app cannot be properly configured.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = PrimaryText,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
 
             // Step Content
@@ -210,7 +224,7 @@ fun WelcomeSetupWizard(
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
-                            label = { Text("What is your name?", style = MaterialTheme.typography.bodyMedium) },
+                            label = { Text("What is your name? *", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
@@ -219,12 +233,12 @@ fun WelcomeSetupWizard(
                                 unfocusedBorderColor = BorderMedium
                             )
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
                         OutlinedTextField(
                             value = homeAddress,
                             onValueChange = { homeAddress = it },
-                            label = { Text("What is your home address? (Optional)", style = MaterialTheme.typography.bodyMedium) },
+                            label = { Text("Home Address (Optional)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -232,75 +246,49 @@ fun WelcomeSetupWizard(
                                 unfocusedBorderColor = BorderMedium
                             )
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
-
-                        // Language Toggle Selection
-                        Text(
-                            text = "Preferred Language",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = PrimaryText,
-                            modifier = Modifier.align(Alignment.Start)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            listOf("English", "Spanish", "Hindi").forEach { lang ->
-                                val isSelected = language == lang
-                                FilterChip(
-                                    selected = isSelected,
-                                    onClick = { language = lang },
-                                    label = { Text(lang, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(8.dp)) },
-                                    modifier = Modifier.weight(1f),
-                                    colors = FilterChipDefaults.filterChipColors(
-                                        selectedContainerColor = AccentBlue,
-                                        selectedLabelColor = CardBackground
-                                    )
-                                )
-                            }
-                        }
                     }
 
                     2 -> {
-                        // Emergency Contacts
+                        // Contacts Setup
                         Text(
-                            text = "Emergency Contacts",
+                            text = "Emergency & Family Contacts",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Add family members or friends who can help in an emergency.",
+                            text = "Add family members or emergency contacts.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = SecondaryText,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(24.dp))
 
                         OutlinedTextField(
                             value = contactName,
                             onValueChange = { contactName = it },
-                            label = { Text("Contact Name (e.g. Daughter)", style = MaterialTheme.typography.bodyMedium) },
+                            label = { Text("Contact Name (e.g. Rahul)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        OutlinedTextField(
+                            value = contactRel,
+                            onValueChange = { contactRel = it },
+                            label = { Text("Relationship (e.g. Son)", style = MaterialTheme.typography.bodyMedium) },
+                            textStyle = MaterialTheme.typography.bodyLarge,
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         OutlinedTextField(
                             value = contactPhone,
                             onValueChange = { contactPhone = it },
                             label = { Text("Phone Number", style = MaterialTheme.typography.bodyMedium) },
-                            textStyle = MaterialTheme.typography.bodyLarge,
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        OutlinedTextField(
-                            value = contactRel,
-                            onValueChange = { contactRel = it },
-                            label = { Text("Relationship (e.g., Son, Neighbor)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
@@ -312,39 +300,56 @@ fun WelcomeSetupWizard(
                                 if (contactName.isNotBlank() && contactPhone.isNotBlank()) {
                                     tempContacts.add(Triple(contactName, contactRel, contactPhone))
                                     contactName = ""
-                                    contactPhone = ""
                                     contactRel = ""
+                                    contactPhone = ""
                                 }
                             },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(60.dp),
+                            shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = AccentTeal),
-                            modifier = Modifier.fillMaxWidth().height(60.dp)
+                            enabled = contactName.isNotBlank() && contactPhone.isNotBlank()
                         ) {
-                            Icon(Icons.Default.Add, contentDescription = null)
+                            Icon(imageVector = Icons.Default.Add, contentDescription = null)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("ADD CONTACT", style = MaterialTheme.typography.bodyLarge)
+                            Text("ADD CONTACT", style = MaterialTheme.typography.labelLarge)
                         }
 
                         if (tempContacts.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(20.dp))
-                            Text("Added Contacts:", style = MaterialTheme.typography.titleLarge, modifier = Modifier.align(Alignment.Start))
+                            Text(
+                                text = "Added Contacts:",
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.align(Alignment.Start)
+                            )
                             Spacer(modifier = Modifier.height(8.dp))
-                            tempContacts.forEachIndexed { index, contact ->
+                            tempContacts.forEachIndexed { idx, c ->
                                 Card(
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                                    border = BorderStroke(2.dp, BorderLight),
-                                    colors = CardDefaults.cardColors(containerColor = CardBackground)
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    colors = CardDefaults.cardColors(containerColor = CardBackground),
+                                    border = BorderStroke(1.dp, BorderLight)
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Column {
-                                            Text("${index + 1}. ${contact.first} (${contact.second})", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
-                                            Text(contact.third, style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
+                                            Text(
+                                                text = "${idx + 1}. ${c.first} (${c.second})",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(text = c.third, style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
                                         }
-                                        IconButton(onClick = { tempContacts.removeAt(index) }) {
-                                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = EmergencyRed)
+                                        IconButton(onClick = { tempContacts.removeAt(idx) }) {
+                                            Icon(imageVector = Icons.Default.Delete, contentDescription = "Remove", tint = EmergencyRed)
                                         }
                                     }
                                 }
@@ -355,14 +360,14 @@ fun WelcomeSetupWizard(
                     3 -> {
                         // Hospital Setup
                         Text(
-                            text = "Hospital Setup",
+                            text = "Preferred Hospital",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Configure preferred hospital info for easy navigation or calling.",
+                            text = "Add hospital details for quick navigation and ambulance calls.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = SecondaryText,
                             textAlign = TextAlign.Center
@@ -372,12 +377,13 @@ fun WelcomeSetupWizard(
                         OutlinedTextField(
                             value = hospitalName,
                             onValueChange = { hospitalName = it },
-                            label = { Text("Hospital Name (e.g. City Hospital)", style = MaterialTheme.typography.bodyMedium) },
+                            label = { Text("Hospital Name (e.g. City Care Hospital)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+
                         OutlinedTextField(
                             value = hospitalAddress,
                             onValueChange = { hospitalAddress = it },
@@ -386,15 +392,17 @@ fun WelcomeSetupWizard(
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+
                         OutlinedTextField(
                             value = hospitalPhone,
                             onValueChange = { hospitalPhone = it },
-                            label = { Text("Hospital Helpline Phone", style = MaterialTheme.typography.bodyMedium) },
+                            label = { Text("Hospital Desk Phone (Optional)", style = MaterialTheme.typography.bodyMedium) },
                             textStyle = MaterialTheme.typography.bodyLarge,
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
+
                         OutlinedTextField(
                             value = hospitalAmbulance,
                             onValueChange = { hospitalAmbulance = it },
@@ -406,101 +414,130 @@ fun WelcomeSetupWizard(
                     }
 
                     4 -> {
-                        // Action suggestions list
+                        // Cab App & Network Card Setup
                         Text(
-                            text = "Actions Quick Access",
+                            text = "App & Network Settings",
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Select actions you want available immediately on your home screen.",
+                            text = "Configure cab app preferences and network shortcut.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = SecondaryText,
                             textAlign = TextAlign.Center
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-                        predefinedSuggestions.forEachIndexed { idx, item ->
-                            val (title, icon, isChecked) = item
-                            Card(
-                                onClick = {
-                                    predefinedSuggestions[idx] = Triple(title, icon, !isChecked)
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 6.dp),
-                                border = BorderStroke(2.dp, if (isChecked) AccentBlue else BorderLight),
-                                colors = CardDefaults.cardColors(containerColor = CardBackground)
-                            ) {
-                                Column {
+                        // Cab App Selection Box
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = CardBackground),
+                            border = BorderStroke(2.dp, AccentBlue)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "🚕 Preferred Cab Booking App",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryText
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                getInstalledCabApps.forEach { (cabName, cabPkg, isInstalled) ->
+                                    val statusLabel = if (isInstalled) "(Detected)" else "(Not Installed)"
+                                    val labelColor = if (isInstalled) AccentTeal else SecondaryText
+
                                     Row(
-                                        modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Text(icon, style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(end = 16.dp))
-                                        Text(
-                                            title,
-                                            modifier = Modifier.weight(1f),
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            fontWeight = FontWeight.Bold
+                                        RadioButton(
+                                            selected = selectedCabAppSetup == cabName,
+                                            onClick = {
+                                                selectedCabAppSetup = cabName
+                                                selectedCabPackageSetup = cabPkg
+                                            }
                                         )
-                                        Checkbox(
-                                            checked = isChecked,
-                                            onCheckedChange = { checked ->
-                                                predefinedSuggestions[idx] = Triple(title, icon, checked ?: false)
-                                            },
-                                            colors = CheckboxDefaults.colors(checkedColor = AccentBlue)
+                                        Text(
+                                            text = "$cabName ",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = PrimaryText
+                                        )
+                                        Text(
+                                            text = statusLabel,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = labelColor
                                         )
                                     }
+                                }
+                            }
+                        }
 
-                                    if (title == "BOOK A CAB" && isChecked) {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
-                                                .background(ScreenBackground, RoundedCornerShape(12.dp))
-                                                .padding(16.dp)
-                                        ) {
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // Network Change Option Prompt
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = CardBackground),
+                            border = BorderStroke(2.dp, AccentTeal)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "🌐 Change Network / SIM Card Option",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = PrimaryText
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = "Do you want to add a 'Change Network / SIM' card to the main screen so the senior can open Mobile Data and SIM settings easily?",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = SecondaryText
+                                )
+                                Spacer(modifier = Modifier.height(14.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    FilterChip(
+                                        selected = addNetworkCard,
+                                        onClick = { addNetworkCard = true },
+                                        label = { Text("YES, ADD CARD", fontWeight = FontWeight.Bold) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    FilterChip(
+                                        selected = !addNetworkCard,
+                                        onClick = { addNetworkCard = false },
+                                        label = { Text("NO, DO NOT ADD", fontWeight = FontWeight.Bold) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+
+                                if (addNetworkCard) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Surface(
+                                        color = AccentTeal.copy(alpha = 0.12f),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Column(modifier = Modifier.padding(14.dp)) {
                                             Text(
-                                                text = "Which app should we open to book the cab?",
+                                                text = "📱 How to Change Network on This Phone:",
                                                 style = MaterialTheme.typography.bodyMedium,
                                                 fontWeight = FontWeight.Bold,
+                                                color = AccentTeal
+                                            )
+                                            Spacer(modifier = Modifier.height(6.dp))
+                                            Text(
+                                                text = "1. Tap 'CHANGE NETWORK / SIM' card on Home screen.\n2. Tap 'Settings' -> 'Network & Internet' -> 'SIMs'.\n3. Scroll down and toggle 'Mobile Data' at the bottom.",
+                                                style = MaterialTheme.typography.bodyMedium,
                                                 color = PrimaryText
                                             )
-                                            Spacer(modifier = Modifier.height(10.dp))
-
-                                                                                        getInstalledCabApps.forEach { (cabName, cabPkg, isInstalled) ->
-                                                val statusLabel = if (isInstalled) "(Detected)" else "(Not Detected)"
-                                                val labelColor = if (isInstalled) AccentTeal else SecondaryText
- 
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(vertical = 4.dp),
-                                                     verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    RadioButton(
-                                                        selected = selectedCabAppSetup == cabName,
-                                                        onClick = {
-                                                            selectedCabAppSetup = cabName
-                                                            selectedCabPackageSetup = cabPkg
-                                                        }
-                                                    )
-                                                    Text(
-                                                        text = "$cabName ",
-                                                        style = MaterialTheme.typography.bodyLarge,
-                                                        fontWeight = FontWeight.Bold,
-                                                        color = PrimaryText
-                                                    )
-                                                    Text(
-                                                        text = statusLabel,
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        color = labelColor
-                                                    )
-                                                }
-                                            }
                                         }
                                     }
                                 }
@@ -514,18 +551,18 @@ fun WelcomeSetupWizard(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = null,
                             tint = AccentTeal,
-                            modifier = Modifier.size(120.dp)
+                            modifier = Modifier.size(100.dp)
                         )
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         Text(
                             text = "You are all set!",
                             style = MaterialTheme.typography.headlineLarge,
                             fontWeight = FontWeight.Bold,
                             color = PrimaryText
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "SeniorEase will now display simple large action cards. You can change these preferences at any time through Caregiver settings.",
+                            text = "SeniorEase will now display simple large action cards for Emergency, Phone Calls, Hospital, Cab, Documents, and configured actions.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = SecondaryText,
                             textAlign = TextAlign.Center
@@ -536,7 +573,7 @@ fun WelcomeSetupWizard(
 
             // Bottom Navigation Panel
             if (currentStep > 0) {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(24.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -546,7 +583,7 @@ fun WelcomeSetupWizard(
                             onClick = { currentStep-- },
                             modifier = Modifier
                                 .weight(1f)
-                                .height(72.dp),
+                                .height(64.dp),
                             shape = RoundedCornerShape(12.dp),
                             border = BorderStroke(2.dp, BorderMedium)
                         ) {
@@ -558,7 +595,7 @@ fun WelcomeSetupWizard(
                     Button(
                         onClick = {
                             if (currentStep == 5) {
-                                                                 viewModel.saveProfile(
+                                viewModel.saveProfile(
                                     name = name.ifBlank { "User" },
                                     language = language,
                                     homeAddr = homeAddress.ifBlank { null }
@@ -583,30 +620,16 @@ fun WelcomeSetupWizard(
                                         emergency = hospitalPhone
                                     )
                                 }
-                                                                 // Save selected predefined actions
-                                 viewModel.clearCustomActions() // Clear previous custom actions first
-                                 predefinedSuggestions.forEach { actionTuple ->
-                                     val (title, icon, isChecked) = actionTuple
-                                     if (isChecked) {
-                                         val type = when (title) {
-                                             "FLASHLIGHT" -> "FLASHLIGHT"
-                                             "BOOK A CAB" -> "CAB_WORKFLOW"
-                                             "PHONE SETTINGS" -> "OPEN_SETTINGS"
-                                             "OPEN WHATSAPP" -> "OPEN_APP"
-                                             "OPEN YOUTUBE" -> "OPEN_APP"
-                                             else -> "CUSTOM_WORKFLOW"
-                                         }
-                                         val payload = when (title) {
-                                             "OPEN WHATSAPP" -> "com.whatsapp"
-                                             "OPEN YOUTUBE" -> "com.google.android.youtube"
-                                             "PHONE SETTINGS" -> "SYSTEM"
-                                             else -> ""
-                                         }
-                                         if (title != "EMERGENCY DIRECT DIAL") {
-                                             viewModel.addCustomAction(title, icon, type, payload)
-                                         }
-                                     }
-                                 }
+                                
+                                viewModel.clearCustomActions()
+                                if (addNetworkCard) {
+                                    viewModel.addCustomAction(
+                                        title = "CHANGE NETWORK / SIM",
+                                        icon = "🌐",
+                                        type = "OPEN_SETTINGS",
+                                        payload = "SIM_MANAGER"
+                                    )
+                                }
 
                                 viewModel.setFirstRunCompleted(true)
                                 onSetupComplete()
@@ -616,7 +639,7 @@ fun WelcomeSetupWizard(
                         },
                         modifier = Modifier
                             .weight(1f)
-                            .height(72.dp),
+                            .height(64.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
                     ) {

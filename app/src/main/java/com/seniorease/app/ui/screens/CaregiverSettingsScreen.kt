@@ -4,6 +4,7 @@ package com.seniorease.app.ui.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -218,13 +219,31 @@ fun CaregiverSettingsScreen(
 
     // Custom Action Builder Dialog (Requirement 6)
     if (showActionBuilder) {
+        val context = androidx.compose.ui.platform.LocalContext.current
         var actionTitle by remember { mutableStateOf("") }
-        var selectedIcon by remember { mutableStateOf("📞") }
-        var selectedType by remember { mutableStateOf("CALL") } // CALL, OPEN_APP, NAVIGATE, OPEN_SETTINGS, FLASHLIGHT
+        var selectedIcon by remember { mutableStateOf("📱") }
+        var selectedType by remember { mutableStateOf("OPEN_APP") } // CALL, OPEN_APP, NAVIGATE, OPEN_SETTINGS, FLASHLIGHT
         var actionPayload by remember { mutableStateOf("") }
+        var appSearchQuery by remember { mutableStateOf("") }
 
-        val iconsList = listOf("📞", "💬", "🏠", "🏥", "👨‍⚕️", "🚕", "🔦", "⚙️", "📺", "🗺️")
-        val actionTypes = listOf("CALL", "OPEN_APP", "NAVIGATE", "OPEN_SETTINGS", "FLASHLIGHT")
+        val iconsList = listOf("📱", "📞", "💬", "🏠", "🏥", "🚕", "🔦", "⚙️", "📺", "🗺️")
+        val actionTypes = listOf("OPEN_APP", "CALL", "NAVIGATE", "OPEN_SETTINGS", "FLASHLIGHT")
+
+        val installedAppsList = remember {
+            val pm = context.packageManager
+            val mainIntent = android.content.Intent(android.content.Intent.ACTION_MAIN, null).apply {
+                addCategory(android.content.Intent.CATEGORY_LAUNCHER)
+            }
+            pm.queryIntentActivities(mainIntent, 0).map { resolveInfo ->
+                val appName = resolveInfo.loadLabel(pm).toString()
+                val pkgName = resolveInfo.activityInfo.packageName
+                Pair(appName, pkgName)
+            }.distinctBy { it.second }.sortedBy { it.first.lowercase() }
+        }
+
+        val filteredApps = installedAppsList.filter {
+            appSearchQuery.isBlank() || it.first.contains(appSearchQuery, ignoreCase = true) || it.second.contains(appSearchQuery, ignoreCase = true)
+        }
 
         AlertDialog(
             onDismissRequest = { showActionBuilder = false },
@@ -243,7 +262,7 @@ fun CaregiverSettingsScreen(
                     OutlinedTextField(
                         value = actionTitle,
                         onValueChange = { actionTitle = it },
-                        placeholder = { Text("e.g. Call Son") },
+                        placeholder = { Text("e.g. OPEN WHATSAPP") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -292,8 +311,8 @@ fun CaregiverSettingsScreen(
                                 )
                                 Text(
                                     text = when (type) {
+                                        "OPEN_APP" -> "Open an installed application"
                                         "CALL" -> "Call a phone number"
-                                        "OPEN_APP" -> "Open another app"
                                         "NAVIGATE" -> "Navigate to address"
                                         "OPEN_SETTINGS" -> "Open settings page"
                                         else -> "Toggle Flashlight"
@@ -307,12 +326,73 @@ fun CaregiverSettingsScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     // Config/Payload input
-                    if (selectedType != "FLASHLIGHT") {
+                    if (selectedType == "OPEN_APP") {
+                        Text("Select Installed Application", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(6.dp))
+                        OutlinedTextField(
+                            value = appSearchQuery,
+                            onValueChange = { appSearchQuery = it },
+                            placeholder = { Text("Search apps (e.g. WhatsApp, Maps)...") },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .background(ScreenBackground, RoundedCornerShape(12.dp))
+                                .border(1.dp, BorderLight, RoundedCornerShape(12.dp))
+                                .padding(8.dp)
+                        ) {
+                            androidx.compose.foundation.lazy.LazyColumn(modifier = Modifier.fillMaxSize()) {
+                                items(filteredApps.size) { idx ->
+                                    val (appName, pkgName) = filteredApps[idx]
+                                    val isSelected = actionPayload == pkgName
+                                    Card(
+                                        onClick = {
+                                            actionPayload = pkgName
+                                            if (actionTitle.isBlank()) {
+                                                actionTitle = appName.uppercase()
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp),
+                                        colors = CardDefaults.cardColors(containerColor = if (isSelected) AccentTeal.copy(alpha = 0.15f) else CardBackground),
+                                        border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) AccentTeal else BorderLight)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(12.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween
+                                        ) {
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(appName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                                                Text(pkgName, style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
+                                            }
+                                            RadioButton(
+                                                selected = isSelected,
+                                                onClick = {
+                                                    actionPayload = pkgName
+                                                    if (actionTitle.isBlank()) {
+                                                        actionTitle = appName.uppercase()
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (selectedType != "FLASHLIGHT") {
                         val label = when (selectedType) {
                             "CALL" -> "Phone Number"
-                            "OPEN_APP" -> "App Package Name (e.g. com.whatsapp)"
                             "NAVIGATE" -> "Target Destination Address"
-                            else -> "Setting Type (WIFI, BLUETOOTH, SOUND, DISPLAY)"
+                            else -> "Setting Type (SIM_MANAGER, WIFI, BLUETOOTH, SOUND)"
                         }
                         Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(6.dp))

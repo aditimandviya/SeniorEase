@@ -342,40 +342,6 @@ fun HomeScreen(
                     }
                 }
 
-                // Change Network & SIM Settings Access
-                item {
-                    Card(
-                        onClick = { viewModel.openNetworkSettings() },
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(84.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("🌐", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
-                            Column {
-                                Text(
-                                    text = "CHANGE NETWORK / SIM",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.titleLarge,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "SIM Manager & Mobile Data",
-                                    color = Color.LightGray,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                }
-
                 // Custom User Configured Cards
                 items(actions) { action ->
                     val isFlashlight = action.actionType == "FLASHLIGHT"
