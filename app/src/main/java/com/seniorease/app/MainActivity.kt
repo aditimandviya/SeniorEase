@@ -45,13 +45,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeniorEaseTheme {
                 val settingsState by viewModel.appSettings.collectAsState()
+                val userProfileState by viewModel.userProfile.collectAsState()
                 var currentScreen by rememberSaveable { mutableStateOf("home") }
 
                 var permissionExplanationText by remember { mutableStateOf<String?>(null) }
                 var permissionExplanationTitle by remember { mutableStateOf("") }
                 var permissionsToRequest by remember { mutableStateOf<Array<String>>(emptyArray()) }
 
-                val firstRunCompleted = settingsState?.firstRunCompleted ?: false
+                val firstRunCompleted = (settingsState?.firstRunCompleted == true) || (userProfileState != null && userProfileState?.name?.isNotBlank() == true)
                 val activeScreen = if (!firstRunCompleted) "wizard" else currentScreen
 
                 val toastMsg = viewModel.toastMessage

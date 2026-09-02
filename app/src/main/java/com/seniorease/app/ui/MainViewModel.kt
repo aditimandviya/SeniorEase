@@ -89,8 +89,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application),
     init {
         // Initialize Default App Settings if none exist
         viewModelScope.launch(Dispatchers.IO) {
-            if (appDao.getAppSettings() == null) {
-                appDao.saveAppSettings(AppSettings(firstRunCompleted = false))
+            val settings = appDao.getAppSettings()
+            val profile = appDao.getUserProfile()
+            if (settings == null) {
+                appDao.saveAppSettings(AppSettings(firstRunCompleted = (profile != null && profile.name.isNotBlank())))
+            } else if (profile != null && profile.name.isNotBlank() && !settings.firstRunCompleted) {
+                appDao.saveAppSettings(settings.copy(firstRunCompleted = true))
             }
         }
     }
