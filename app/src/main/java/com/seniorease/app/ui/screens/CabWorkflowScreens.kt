@@ -322,15 +322,7 @@ fun CabWorkflowScreen(
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(40.dp))
-                            Button(
-                                onClick = { step = 3 },
-                                modifier = Modifier.fillMaxWidth().height(72.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
-                            ) {
-                                Text("NEXT", style = MaterialTheme.typography.labelLarge)
-                            }
+                            Spacer(modifier = Modifier.height(20.dp))
                         }
                     }
 
@@ -401,26 +393,55 @@ fun CabWorkflowScreen(
                 }
             }
 
-            // Global Back Control button
+            // Pinned Bottom Navigation Bar: GO BACK & NEXT side-by-side
             if (step < 3) {
-                Spacer(modifier = Modifier.height(20.dp))
-                OutlinedButton(
-                    onClick = {
-                        if (step > 1) {
-                            step--
-                        } else {
-                            onNavigateBack()
-                        }
-                    },
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    border = BorderStroke(3.dp, BorderMedium)
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = SecondaryText)
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text("GO BACK", style = MaterialTheme.typography.labelLarge, color = SecondaryText)
+                    OutlinedButton(
+                        onClick = {
+                            if (step > 1) {
+                                step--
+                            } else {
+                                onNavigateBack()
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        border = BorderStroke(2.dp, BorderMedium)
+                    ) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null, tint = SecondaryText)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("GO BACK", style = MaterialTheme.typography.labelLarge, color = SecondaryText)
+                    }
+
+                    Button(
+                        onClick = {
+                            if (step == 1) {
+                                if (typedDestination.isNotBlank()) {
+                                    selectedDestination = typedDestination
+                                }
+                                if (selectedDestination.isNotBlank()) {
+                                    step = 2
+                                }
+                            } else if (step == 2) {
+                                step = 3
+                            }
+                        },
+                        enabled = (step == 1 && (selectedDestination.isNotBlank() || typedDestination.isNotBlank())) || (step == 2),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(64.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+                    ) {
+                        Text("NEXT ➡️", style = MaterialTheme.typography.labelLarge, color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
