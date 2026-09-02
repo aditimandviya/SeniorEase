@@ -87,11 +87,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application),
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     init {
-        // Force setup wizard to start on launch for setting up from scratch
+        // Initialize Default App Settings if none exist
         viewModelScope.launch(Dispatchers.IO) {
-            val settings = appDao.getAppSettings() ?: AppSettings()
-            appDao.saveAppSettings(settings.copy(firstRunCompleted = false))
+            if (appDao.getAppSettings() == null) {
+                appDao.saveAppSettings(AppSettings(firstRunCompleted = false))
+            }
         }
+    }
+
+    fun makePhoneCall(phoneNumber: String) {
+        actionEngine.execute(
+            CustomAction(title = "Phone Call", icon = "📞", actionType = "CALL", payload = phoneNumber),
+            appSettings.value?.testModeEnabled ?: false
+        )
+    }
+
+    fun openNetworkSettings() {
+        actionEngine.execute(
+            CustomAction(title = "Network & SIM", icon = "🌐", actionType = "OPEN_SETTINGS", payload = "SIM_MANAGER"),
+            appSettings.value?.testModeEnabled ?: false
+        )
     }
 
     // --- DB Modification Methods ---

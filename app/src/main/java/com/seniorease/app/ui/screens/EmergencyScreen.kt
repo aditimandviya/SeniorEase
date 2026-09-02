@@ -82,6 +82,39 @@ fun EmergencyScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // 0. DIRECT DIAL MAIN CONTACT (Priority 1)
+                val mainContact = contacts.minByOrNull { it.priority } ?: contacts.firstOrNull()
+                if (mainContact != null) {
+                    Button(
+                        onClick = {
+                            viewModel.makePhoneCall(mainContact.phoneNumber)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(96.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentAmber)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text("📞", fontSize = 32.sp, modifier = Modifier.padding(end = 12.dp))
+                            Column(horizontalAlignment = Alignment.Start) {
+                                Text(
+                                    text = "CALL ${mainContact.name.uppercase()} DIRECTLY",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = mainContact.phoneNumber,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.Black.copy(alpha = 0.85f)
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
                 // 1. CALL AMBULANCE
                 Button(
                     onClick = {

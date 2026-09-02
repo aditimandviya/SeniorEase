@@ -146,9 +146,18 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToCaregiver = {
                                     currentScreen = "caregiver"
                                 },
-                                onNavigateToDocuments = {
+                                 onNavigateToDocuments = {
                                     currentScreen = "documents"
+                                },
+                                onNavigateToCalls = {
+                                    currentScreen = "calls"
                                 }
+                            )
+                        }
+                        "calls" -> {
+                            com.seniorease.app.ui.screens.PhoneCallsScreen(
+                                viewModel = viewModel,
+                                onNavigateBack = { currentScreen = "home" }
                             )
                         }
                         "emergency" -> {

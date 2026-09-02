@@ -14,6 +14,7 @@ val AccentTeal = Color(0xFF0F766E)       // Dark Teal - friendly and clear
 val AccentAmber = Color(0xFFB45309)      // Amber - warnings, toggles
 val EmergencyRed = Color(0xFFB91C1C)     // Deep Red - impossible to miss
 val AccentPurple = Color(0xFF6D28D9)     // Deep Purple - documents folder
+val AccentGreen = Color(0xFF15803D)      // Deep Green - phone calls and action buttons
 
 // Borders and Dividers
 val BorderLight = Color(0xFFCBD5E1)       // Slate 300

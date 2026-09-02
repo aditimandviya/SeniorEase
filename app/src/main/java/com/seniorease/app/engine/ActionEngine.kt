@@ -173,7 +173,7 @@ class ActionEngine(private val context: Context) {
         val action = when (settingType.uppercase()) {
             "WIFI" -> Settings.ACTION_WIFI_SETTINGS
             "BLUETOOTH" -> Settings.ACTION_BLUETOOTH_SETTINGS
-            "MOBILE_DATA", "NETWORK" -> Settings.ACTION_WIRELESS_SETTINGS
+            "SIM", "SIM_MANAGER", "MOBILE_DATA", "NETWORK", "CONNECTIONS" -> Settings.ACTION_NETWORK_OPERATOR_SETTINGS
             "SOUND", "VOLUME" -> Settings.ACTION_SOUND_SETTINGS
             "DISPLAY" -> Settings.ACTION_DISPLAY_SETTINGS
             "ACCESSIBILITY" -> Settings.ACTION_ACCESSIBILITY_SETTINGS

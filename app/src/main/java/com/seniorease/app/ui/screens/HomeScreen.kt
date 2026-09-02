@@ -40,7 +40,8 @@ fun HomeScreen(
     onNavigateToCab: () -> Unit,
     onNavigateToHospital: () -> Unit,
     onNavigateToCaregiver: () -> Unit,
-    onNavigateToDocuments: () -> Unit
+    onNavigateToDocuments: () -> Unit,
+    onNavigateToCalls: () -> Unit
 ) {
     val context = LocalContext.current
     val userProfile by viewModel.userProfile.collectAsState()
@@ -233,6 +234,33 @@ fun HomeScreen(
                     }
                 }
 
+                // Phone Calls Access
+                item {
+                    Card(
+                        onClick = onNavigateToCalls,
+                        colors = CardDefaults.cardColors(containerColor = AccentGreen),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("📞", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text(
+                                text = "PHONE CALLS",
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
+
                 // Predefined Hospital Access
                 item {
                     Card(
@@ -310,6 +338,40 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
+                        }
+                    }
+                }
+
+                // Change Network & SIM Settings Access
+                item {
+                    Card(
+                        onClick = { viewModel.openNetworkSettings() },
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text("🌐", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Column {
+                                Text(
+                                    text = "CHANGE NETWORK / SIM",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "SIM Manager & Mobile Data",
+                                    color = Color.LightGray,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }
