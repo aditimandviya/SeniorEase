@@ -209,20 +209,20 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = EmergencyRed),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(110.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(88.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(24.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
                                 "🚨",
-                                fontSize = 36.sp,
-                                modifier = Modifier.padding(end = 16.dp)
+                                fontSize = 28.sp,
+                                modifier = Modifier.padding(end = 12.dp)
                             )
                             Text(
                                 text = "EMERGENCY",
@@ -241,16 +241,16 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = AccentGreen),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(84.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("📞", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text("📞", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Text(
                                 text = "PHONE CALLS",
                                 color = Color.White,
@@ -268,16 +268,16 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = AccentTeal),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(84.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🏥", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text("🏥", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Text(
                                 text = "GO TO HOSPITAL",
                                 color = Color.White,
@@ -295,16 +295,16 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = AccentBlue),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(84.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🚕", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text("🚕", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Text(
                                 text = "BOOK A CAB",
                                 color = Color.White,
@@ -322,16 +322,16 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = AccentPurple),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(84.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("📁", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text("📁", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Text(
                                 text = "MY DOCUMENTS & NOTES",
                                 color = Color.White,
@@ -349,16 +349,16 @@ fun HomeScreen(
                         colors = CardDefaults.cardColors(containerColor = Color(0xFF263238)),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp)
+                            .height(84.dp),
+                        shape = RoundedCornerShape(18.dp)
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(20.dp),
+                                .padding(16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text("🌐", fontSize = 32.sp, modifier = Modifier.padding(end = 16.dp))
+                            Text("🌐", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Column {
                                 Text(
                                     text = "CHANGE NETWORK / SIM",

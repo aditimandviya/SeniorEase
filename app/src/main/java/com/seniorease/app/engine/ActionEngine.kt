@@ -170,10 +170,32 @@ class ActionEngine(private val context: Context) {
     }
 
     private fun openSettings(settingType: String) {
-        val action = when (settingType.uppercase()) {
+        val type = settingType.uppercase()
+        if (type in listOf("SIM", "SIM_MANAGER", "MOBILE_DATA", "NETWORK", "CONNECTIONS")) {
+            val intents = listOf(
+                Intent("android.settings.NETWORK_PROVIDER_SETTINGS"),
+                Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS),
+                Intent("android.settings.MOBILE_DATA_SETTINGS"),
+                Intent(Settings.ACTION_DATA_ROAMING_SETTINGS),
+                Intent(Settings.ACTION_WIRELESS_SETTINGS),
+                Intent(Settings.ACTION_SETTINGS)
+            )
+            for (intent in intents) {
+                try {
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    context.startActivity(intent)
+                    return
+                } catch (e: Exception) {
+                    // Try next intent in chain
+                }
+            }
+            listener?.onShowToast("We couldn't open system network settings.")
+            return
+        }
+
+        val action = when (type) {
             "WIFI" -> Settings.ACTION_WIFI_SETTINGS
             "BLUETOOTH" -> Settings.ACTION_BLUETOOTH_SETTINGS
-            "SIM", "SIM_MANAGER", "MOBILE_DATA", "NETWORK", "CONNECTIONS" -> Settings.ACTION_NETWORK_OPERATOR_SETTINGS
             "SOUND", "VOLUME" -> Settings.ACTION_SOUND_SETTINGS
             "DISPLAY" -> Settings.ACTION_DISPLAY_SETTINGS
             "ACCESSIBILITY" -> Settings.ACTION_ACCESSIBILITY_SETTINGS

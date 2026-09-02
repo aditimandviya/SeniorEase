@@ -91,12 +91,12 @@ fun EmergencyScreen(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(96.dp),
+                            .height(84.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = AccentAmber)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("📞", fontSize = 32.sp, modifier = Modifier.padding(end = 12.dp))
+                            Text("📞", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                             Column(horizontalAlignment = Alignment.Start) {
                                 Text(
                                     text = "CALL ${mainContact.name.uppercase()} DIRECTLY",
@@ -112,7 +112,7 @@ fun EmergencyScreen(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
                 }
 
                 // 1. CALL AMBULANCE
@@ -126,12 +126,12 @@ fun EmergencyScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(96.dp),
+                        .height(80.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = EmergencyRed)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🚑", fontSize = 36.sp, modifier = Modifier.padding(end = 16.dp))
+                        Text("🚑", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
                         Text("CALL AMBULANCE", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     }
                 }
