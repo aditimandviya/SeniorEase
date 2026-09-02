@@ -137,7 +137,20 @@ fun CaregiverSettingsScreen(
                     0 -> CustomActionsTab(
                         actions = actions,
                         onDeleteAction = { viewModel.deleteCustomAction(it) },
-                        onAddActionClick = { showActionBuilder = true }
+                        onAddActionClick = { showActionBuilder = true },
+                        onToggleNetworkCard = {
+                            val networkAction = actions.find { it.title == "CHANGE NETWORK / SIM" || it.payload == "SIM_MANAGER" }
+                            if (networkAction != null) {
+                                viewModel.deleteCustomAction(networkAction)
+                            } else {
+                                viewModel.addCustomAction(
+                                    title = "CHANGE NETWORK / SIM",
+                                    icon = "🌐",
+                                    type = "OPEN_SETTINGS",
+                                    payload = "SIM_MANAGER"
+                                )
+                            }
+                        }
                     )
                     1 -> ContactsTab(
                         contacts = contacts,
@@ -380,11 +393,57 @@ fun CaregiverSettingsScreen(
                                 }
                             }
                         }
+                    } else if (selectedType == "OPEN_SETTINGS") {
+                        Text("Select Settings Page to Open", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        val settingsPresets = listOf(
+                            Triple("CHANGE NETWORK / SIM", "🌐", "SIM_MANAGER"),
+                            Triple("WI-FI SETTINGS", "📶", "WIFI"),
+                            Triple("SOUND SETTINGS", "🔊", "SOUND"),
+                            Triple("SYSTEM SETTINGS", "⚙️", "SYSTEM")
+                        )
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            settingsPresets.forEach { (title, icon, payloadKey) ->
+                                val isSelected = actionPayload == payloadKey
+                                Card(
+                                    onClick = {
+                                        actionPayload = payloadKey
+                                        actionTitle = title
+                                        selectedIcon = icon
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(containerColor = if (isSelected) AccentTeal.copy(alpha = 0.15f) else CardBackground),
+                                    border = BorderStroke(if (isSelected) 2.dp else 1.dp, if (isSelected) AccentTeal else BorderLight)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(icon, fontSize = 24.sp, modifier = Modifier.padding(end = 12.dp))
+                                        Text(
+                                            text = title,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        RadioButton(
+                                            selected = isSelected,
+                                            onClick = {
+                                                actionPayload = payloadKey
+                                                actionTitle = title
+                                                selectedIcon = icon
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     } else if (selectedType != "FLASHLIGHT") {
                         val label = when (selectedType) {
                             "CALL" -> "Phone Number"
-                            "NAVIGATE" -> "Target Destination Address"
-                            else -> "Setting Type (SIM_MANAGER, WIFI, BLUETOOTH, SOUND)"
+                            else -> "Target Destination Address"
                         }
                         Text(label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(6.dp))
@@ -530,13 +589,50 @@ fun CaregiverSettingsScreen(
 fun CustomActionsTab(
     actions: List<CustomAction>,
     onDeleteAction: (CustomAction) -> Unit,
-    onAddActionClick: () -> Unit
+    onAddActionClick: () -> Unit,
+    onToggleNetworkCard: () -> Unit
 ) {
+    val hasNetworkCard = actions.any { it.title == "CHANGE NETWORK / SIM" || it.payload == "SIM_MANAGER" }
+
     Column(modifier = Modifier.fillMaxSize()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            border = BorderStroke(2.dp, AccentTeal),
+            colors = CardDefaults.cardColors(containerColor = AccentTeal.copy(alpha = 0.08f))
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                    Text("🌐", fontSize = 28.sp, modifier = Modifier.padding(end = 12.dp))
+                    Column {
+                        Text("Change Network / SIM Card", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text("Shortcut for SIM Manager & Mobile Data", style = MaterialTheme.typography.bodyMedium, color = SecondaryText)
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = onToggleNetworkCard,
+                    colors = ButtonDefaults.buttonColors(containerColor = if (hasNetworkCard) EmergencyRed else AccentTeal),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text(if (hasNetworkCard) "REMOVE" else "ADD CARD", fontWeight = FontWeight.Bold)
+                }
+            }
+        }
+
         Button(
             onClick = onAddActionClick,
-            modifier = Modifier.fillMaxWidth().height(64.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AccentTeal)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
         ) {
             Icon(Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
