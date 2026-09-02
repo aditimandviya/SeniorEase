@@ -173,13 +173,15 @@ class ActionEngine(private val context: Context) {
         val type = settingType.uppercase()
         if (type in listOf("SIM", "SIM_MANAGER", "MOBILE_DATA", "NETWORK", "CONNECTIONS")) {
             val intents = listOf(
-                Intent("android.settings.NETWORK_PROVIDER_SETTINGS"),
-                Intent("android.settings.MOBILE_DATA_SETTINGS"),
-                Intent().setClassName("com.android.settings", "com.android.settings.Settings\$MobileNetworkActivity"),
-                Intent().setClassName("com.android.settings", "com.android.settings.Settings\$NetworkProviderSettingsActivity"),
+                Intent("android.settings.SIM_CARD_SETTINGS"),
                 Intent().setClassName("com.android.settings", "com.android.settings.Settings\$SimSettingsActivity"),
-                Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS),
+                Intent().setClassName("com.android.settings", "com.android.settings.Settings\$MobileNetworkListActivity"),
+                Intent().setClassName("com.android.settings", "com.android.settings.network.telephony.MobileNetworkActivity"),
                 Intent(Settings.ACTION_DATA_ROAMING_SETTINGS),
+                Intent("android.settings.MOBILE_DATA_SETTINGS"),
+                Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS),
+                Intent().setClassName("com.android.settings", "com.android.settings.Settings\$MobileNetworkActivity"),
+                Intent("android.settings.NETWORK_PROVIDER_SETTINGS"),
                 Intent(Settings.ACTION_WIRELESS_SETTINGS),
                 Intent(Settings.ACTION_SETTINGS)
             )
