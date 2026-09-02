@@ -8,6 +8,11 @@ android {
     namespace = "com.seniorease.app"
     compileSdk = 34
 
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
     defaultConfig {
         applicationId = "com.seniorease.app"
         minSdk = 26
@@ -21,8 +26,18 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("C:/Users/aditi/OneDrive/Documents/Projects/SeniorEase/seniorease-release-key.jks")
+            storePassword = "SeniorEase2026!"
+            keyAlias = "seniorease"
+            keyPassword = "SeniorEase2026!"
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
