@@ -51,8 +51,9 @@ fun CaregiverSettingsScreen(
         onNavigateBack()
     }
 
-    // Backup/Restore States
+    // Dialog States
     var showBackupRestoreDialog by remember { mutableStateOf(false) }
+    var showRearrangeDialog by remember { mutableStateOf(false) }
     var backupJsonText by remember { mutableStateOf("") }
     var backupStatusText by remember { mutableStateOf("") }
 
@@ -131,27 +132,28 @@ fun CaregiverSettingsScreen(
                 }
             }
 
-            // Content Panel
-            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
-                when (activeTab) {
-                    0 -> CustomActionsTab(
-                        actions = actions,
-                        onDeleteAction = { viewModel.deleteCustomAction(it) },
-                        onAddActionClick = { showActionBuilder = true },
-                        onToggleNetworkCard = {
-                            val networkAction = actions.find { it.title == "CHANGE NETWORK / SIM" || it.payload == "SIM_MANAGER" }
-                            if (networkAction != null) {
-                                viewModel.deleteCustomAction(networkAction)
-                            } else {
-                                viewModel.addCustomAction(
-                                    title = "CHANGE NETWORK / SIM",
-                                    icon = "🌐",
-                                    type = "OPEN_SETTINGS",
-                                    payload = "SIM_MANAGER"
-                                )
-                            }
-                        }
-                    )
+    // Content Panel
+    Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+        when (activeTab) {
+            0 -> CustomActionsTab(
+                actions = actions,
+                onDeleteAction = { viewModel.deleteCustomAction(it) },
+                onAddActionClick = { showActionBuilder = true },
+                onToggleNetworkCard = {
+                    val networkAction = actions.find { it.title == "CHANGE NETWORK / SIM" || it.payload == "SIM_MANAGER" }
+                    if (networkAction != null) {
+                        viewModel.deleteCustomAction(networkAction)
+                    } else {
+                        viewModel.addCustomAction(
+                            title = "CHANGE NETWORK / SIM",
+                            icon = "🌐",
+                            type = "OPEN_SETTINGS",
+                            payload = "SIM_MANAGER"
+                        )
+                    }
+                },
+                onRearrangeCardsClick = { showRearrangeDialog = true }
+            )
                     1 -> ContactsTab(
                         contacts = contacts,
                         onAddContact = { name, rel, phone -> viewModel.addEmergencyContact(name, rel, phone, contacts.size + 1) },
@@ -228,6 +230,123 @@ fun CaregiverSettingsScreen(
                 }
             }
         }
+    }
+
+    // Rearrange Cards Dialog
+    if (showRearrangeDialog) {
+        val currentSavedKeys = (settings?.cardOrderJson ?: "EMERGENCY,CALLS,HOSPITAL,CAB,DOCUMENTS")
+            .split(",").map { it.trim() }.filter { it.isNotBlank() }
+
+        val activeList = remember(settings?.cardOrderJson, actions) {
+            val list = mutableListOf<Triple<String, String, String>>()
+            val allKeys = (currentSavedKeys + actions.map { "CUSTOM_${it.id}" }).distinct()
+            allKeys.forEach { k ->
+                val pair = when (k) {
+                    "EMERGENCY" -> Pair("EMERGENCY", "🚨")
+                    "CALLS" -> Pair("PHONE CALLS", "📞")
+                    "HOSPITAL" -> Pair("GO TO HOSPITAL", "🏥")
+                    "CAB" -> Pair("BOOK A CAB", "🚕")
+                    "DOCUMENTS" -> Pair("MY DOCUMENTS & NOTES", "📁")
+                    else -> {
+                        val act = actions.find { "CUSTOM_${it.id}" == k || it.title == k }
+                        if (act != null) Pair(act.title, act.icon) else null
+                    }
+                }
+                if (pair != null) {
+                    list.add(Triple(k, pair.first, pair.second))
+                }
+            }
+            mutableStateListOf(*list.toTypedArray())
+        }
+
+        AlertDialog(
+            onDismissRequest = { showRearrangeDialog = false },
+            title = {
+                Text("Rearrange Home Screen Cards", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        "Tap ⬆️ (Up) or ⬇️ (Down) to change the order of cards on the home screen.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SecondaryText
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 320.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        activeList.forEachIndexed { idx, (key, label, icon) ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                border = BorderStroke(1.dp, BorderLight),
+                                colors = CardDefaults.cardColors(containerColor = CardBackground)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(12.dp).fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
+                                        Text(icon, fontSize = 24.sp, modifier = Modifier.padding(end = 10.dp))
+                                        Text(label, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+                                    }
+                                    Row {
+                                        IconButton(
+                                            onClick = {
+                                                if (idx > 0) {
+                                                    val temp = activeList[idx]
+                                                    activeList[idx] = activeList[idx - 1]
+                                                    activeList[idx - 1] = temp
+                                                }
+                                            },
+                                            enabled = idx > 0
+                                        ) {
+                                            Text("⬆️", fontSize = 20.sp)
+                                        }
+                                        IconButton(
+                                            onClick = {
+                                                if (idx < activeList.size - 1) {
+                                                    val temp = activeList[idx]
+                                                    activeList[idx] = activeList[idx + 1]
+                                                    activeList[idx + 1] = temp
+                                                }
+                                            },
+                                            enabled = idx < activeList.size - 1
+                                        ) {
+                                            Text("⬇️", fontSize = 20.sp)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.updateCardOrder(activeList.map { it.first })
+                        showRearrangeDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+                ) {
+                    Text("SAVE CARD ORDER", style = MaterialTheme.typography.labelLarge)
+                }
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { showRearrangeDialog = false },
+                    modifier = Modifier.fillMaxWidth().height(56.dp).padding(top = 8.dp)
+                ) {
+                    Text("CANCEL", style = MaterialTheme.typography.labelLarge, color = SecondaryText)
+                }
+            }
+        )
     }
 
     // Custom Action Builder Dialog (Requirement 6)
@@ -590,7 +709,8 @@ fun CustomActionsTab(
     actions: List<CustomAction>,
     onDeleteAction: (CustomAction) -> Unit,
     onAddActionClick: () -> Unit,
-    onToggleNetworkCard: () -> Unit
+    onToggleNetworkCard: () -> Unit,
+    onRearrangeCardsClick: () -> Unit
 ) {
     val hasNetworkCard = actions.any { it.title == "CHANGE NETWORK / SIM" || it.payload == "SIM_MANAGER" }
 
@@ -627,16 +747,32 @@ fun CustomActionsTab(
             }
         }
 
-        Button(
-            onClick = onAddActionClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Icon(Icons.Default.Add, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("CREATE CUSTOM ACTION CARD", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+            Button(
+                onClick = onAddActionClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = AccentBlue)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(modifier = Modifier.width(6.dp))
+                Text("ADD CARD", style = MaterialTheme.typography.labelLarge)
+            }
+
+            OutlinedButton(
+                onClick = onRearrangeCardsClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(60.dp),
+                border = BorderStroke(2.dp, AccentPurple),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = AccentPurple)
+            ) {
+                Text("🔄 REARRANGE CARDS", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
 

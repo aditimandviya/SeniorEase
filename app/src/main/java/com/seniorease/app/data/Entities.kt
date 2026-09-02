@@ -54,7 +54,8 @@ data class AppSettings(
     val testModeEnabled: Boolean = false,
     val defaultCabApp: String = "Uber",
     val defaultCabAppPackage: String = "com.ubercab",
-    val firstRunCompleted: Boolean = false
+    val firstRunCompleted: Boolean = false,
+    val cardOrderJson: String = "EMERGENCY,CALLS,HOSPITAL,CAB,DOCUMENTS"
 )
 
 @Entity(tableName = "documents")

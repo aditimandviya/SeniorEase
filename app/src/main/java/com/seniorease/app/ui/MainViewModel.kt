@@ -167,6 +167,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
+    fun updateCardOrder(newOrderKeys: List<String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val settings = appDao.getAppSettings() ?: AppSettings()
+            appDao.saveAppSettings(settings.copy(cardOrderJson = newOrderKeys.joinToString(",")))
+        }
+    }
+
     fun addEmergencyContact(name: String, rel: String, phone: String, priority: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             appDao.insertEmergencyContact(

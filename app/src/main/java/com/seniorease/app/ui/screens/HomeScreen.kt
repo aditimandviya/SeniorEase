@@ -197,186 +197,197 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
         ) {
+            val cardOrderKeys = remember(appSettings?.cardOrderJson, actions) {
+                val rawOrder = (appSettings?.cardOrderJson ?: "EMERGENCY,CALLS,HOSPITAL,CAB,DOCUMENTS")
+                    .split(",")
+                    .map { it.trim() }
+                    .filter { it.isNotBlank() }
+                    .toMutableList()
+
+                actions.forEach { customAction ->
+                    val customKey = "CUSTOM_${customAction.id}"
+                    if (!rawOrder.contains(customKey) && !rawOrder.contains(customAction.title)) {
+                        rawOrder.add(customKey)
+                    }
+                }
+                rawOrder.distinct()
+            }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(1),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                // Critical Emergency Button
-                item {
-                    Card(
-                        onClick = onNavigateToEmergency,
-                        colors = CardDefaults.cardColors(containerColor = EmergencyRed),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(88.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                "🚨",
-                                fontSize = 28.sp,
-                                modifier = Modifier.padding(end = 12.dp)
-                            )
-                            Text(
-                                text = "EMERGENCY",
-                                color = Color.White,
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Black
-                            )
+                items(cardOrderKeys) { key ->
+                    when {
+                        key == "EMERGENCY" -> {
+                            Card(
+                                onClick = onNavigateToEmergency,
+                                colors = CardDefaults.cardColors(containerColor = EmergencyRed),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(88.dp),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        "🚨",
+                                        fontSize = 28.sp,
+                                        modifier = Modifier.padding(end = 12.dp)
+                                    )
+                                    Text(
+                                        text = "EMERGENCY",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        fontWeight = FontWeight.Black
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
 
-                // Phone Calls Access
-                item {
-                    Card(
-                        onClick = onNavigateToCalls,
-                        colors = CardDefaults.cardColors(containerColor = AccentGreen),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(84.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("📞", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
-                            Text(
-                                text = "PHONE CALLS",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                        key == "CALLS" -> {
+                            Card(
+                                onClick = onNavigateToCalls,
+                                colors = CardDefaults.cardColors(containerColor = AccentGreen),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(84.dp),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("📞", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
+                                    Text(
+                                        text = "PHONE CALLS",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
 
-                // Predefined Hospital Access
-                item {
-                    Card(
-                        onClick = onNavigateToHospital,
-                        colors = CardDefaults.cardColors(containerColor = AccentTeal),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(84.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("🏥", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
-                            Text(
-                                text = "GO TO HOSPITAL",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                        key == "HOSPITAL" -> {
+                            Card(
+                                onClick = onNavigateToHospital,
+                                colors = CardDefaults.cardColors(containerColor = AccentTeal),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(84.dp),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("🏥", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
+                                    Text(
+                                        text = "GO TO HOSPITAL",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
 
-                // Predefined Cab Booking Access
-                item {
-                    Card(
-                        onClick = onNavigateToCab,
-                        colors = CardDefaults.cardColors(containerColor = AccentBlue),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(84.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("🚕", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
-                            Text(
-                                text = "BOOK A CAB",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                        key == "CAB" -> {
+                            Card(
+                                onClick = onNavigateToCab,
+                                colors = CardDefaults.cardColors(containerColor = AccentBlue),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(84.dp),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("🚕", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
+                                    Text(
+                                        text = "BOOK A CAB",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
 
-                // Predefined Documents Access
-                item {
-                    Card(
-                        onClick = onNavigateToDocuments,
-                        colors = CardDefaults.cardColors(containerColor = AccentPurple),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(84.dp),
-                        shape = RoundedCornerShape(18.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text("📁", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
-                            Text(
-                                text = "MY DOCUMENTS & NOTES",
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                        key == "DOCUMENTS" -> {
+                            Card(
+                                onClick = onNavigateToDocuments,
+                                colors = CardDefaults.cardColors(containerColor = AccentPurple),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(84.dp),
+                                shape = RoundedCornerShape(18.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text("📁", fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
+                                    Text(
+                                        text = "MY DOCUMENTS & NOTES",
+                                        color = Color.White,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
                         }
-                    }
-                }
 
-                // Custom User Configured Cards
-                items(actions) { action ->
-                    val isFlashlight = action.actionType == "FLASHLIGHT"
-                    val isFlashlightOn = isFlashlight && viewModel.isFlashlightActive
+                        else -> {
+                            // Find custom action matching key or custom ID
+                            val customAction = actions.find { "CUSTOM_${it.id}" == key || it.title == key }
+                            if (customAction != null) {
+                                val isFlashlight = customAction.actionType == "FLASHLIGHT"
+                                val isFlashlightOn = isFlashlight && viewModel.isFlashlightActive
+                                val borderAccent = if (isFlashlightOn) AccentAmber else BorderMedium
 
-                    val borderAccent = if (isFlashlightOn) AccentAmber else BorderMedium
-
-                    Card(
-                        onClick = { viewModel.executeAction(action) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        shape = RoundedCornerShape(20.dp),
-                        border = BorderStroke(3.dp, borderAccent),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isFlashlightOn) AccentAmber else CardBackground
-                        )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(20.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = action.icon,
-                                fontSize = 32.sp,
-                                modifier = Modifier.padding(end = 16.dp)
-                            )
-                            Text(
-                                text = action.title,
-                                color = if (isFlashlightOn) Color.White else PrimaryText,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                                Card(
+                                    onClick = { viewModel.executeAction(customAction) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(84.dp),
+                                    shape = RoundedCornerShape(18.dp),
+                                    border = BorderStroke(2.dp, borderAccent),
+                                    colors = CardDefaults.cardColors(containerColor = CardBackground)
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(16.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(customAction.icon, fontSize = 26.sp, modifier = Modifier.padding(end = 12.dp))
+                                        Text(
+                                            text = customAction.title.uppercase(),
+                                            style = MaterialTheme.typography.titleLarge,
+                                            fontWeight = FontWeight.Bold,
+                                            color = PrimaryText
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
